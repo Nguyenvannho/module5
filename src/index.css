@@ -1,15 +1,29 @@
-.red {
-  background-color: #F54391;
-  border-radius: 50%;
-  height: 100px;
-  width: 100px;
+.container {
+  height: 100vh;
 }
-.blue {
-  background-color: #61dafb;
-  border-radius: 50%;
-  height: 50px;
-  left: 25px;
-  position: relative;
-  top: 25px;
-  width: 50px;
+ 
+.form-signin {
+  width: 330px;
+  padding: 15px;
+  margin: auto;
+}
+ 
+.form-signin .checkbox {
+  font-weight: 400;
+}
+ 
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+ 
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+ 
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
