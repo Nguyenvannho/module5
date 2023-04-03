@@ -1,132 +1,128 @@
-//Thực hành 1 :
-// import { Component } from "react";
+import "./App.css";
 
-// class App extends Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       number: 0
-//     };
-//   }
+import React, { Component } from "react";
 
-//   increase = () => {
-//     this.setState({ number: this.state.number + 1 });
-//   };
-//   decrease = () => {
-//     this.setState({ number: this.state.number - 1 });
-//   };
-
-//   render() {
-//     return (
-//       <div style={{ textAlign: "center", padding: 30 }}>
-//         <button onClick={this.decrease}>Decrease</button>
-//         <span style={{ padding: 10 }}>{this.state.number}</span>
-//         <button onClick={this.increase}>Increase</button>
-//       </div>
-//     );
-//   }
-// }
-
-// export default App;
-
-//Thực hành 2 :
-// import React, { Component } from 'react';
- 
-// class App extends Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       color: 'black'
-//     };
-//   }
- 
-//   componentDidMount() {
-//     setTimeout(() => {
-//       this.setState({ color: 'pink' });
-//     }, 5000);
-//   }
- 
-//   render() {
-//     return (
-//       <div>
-//         <div
-//           style={{
-//             backgroundColor: this.state.color,
-//             paddingTop: 20,
-//             width: 400,
-//             height: 80,
-//             margin: 'auto'
-//           }}
-//         />
-//       </div>
-//     );
-//   }
-// }
- 
-// export default App;
-
-//Thực hành 3
-// import React, { Component } from "react";
-// import Hello from "./Hello";
-
-// class App extends Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       display: true
-//     };
-//   }
-
-//   delete = () => {
-//     this.setState({ display: false });
-//   };
-
-//   render() {
-//     let comp;
-//     if (this.state.display) {
-//       comp = <Hello />;
-//     }
-//     return (
-//       <div style={{ textAlign: "center" }}>
-//         {comp}
-//         <button onClick={this.delete}>Delete the component</button>
-//       </div>
-//     );
-//   }
-// }
-// export default App;
-//Thực hành 4:
-import React, { Component } from 'react';
-import Home from "./Home";
- 
-class App extends Component{
-  constructor (props) {
+class App extends Component {
+  constructor(props) {
     super(props);
     this.state = {
-      isLoggedIn: false
+      studentList: [],
+      form: { name: "", phone: "", email: "" },
+      isValid: false,
+      indexSelected: -1,
     };
   }
- 
-  handleLogIn = () => {
-    this.setState({ isLoggedIn: true })
-  }
- 
-  handleLogOut = () => {
-    this.setState({ isLoggedIn: false })
-  }
-  
-  render () {
-    const { isLoggedIn } = this.state
-    if (isLoggedIn) return (<Home onLogOut={this.handleLogOut} />)
+  handleChange = (event) => {
+    this.setState(
+      (state) => {
+        const form = state.form;
+        form[event.target.name] = event.target.value;
+        return { form };
+      },
+      () => this.checkInvalidForm()
+    );
+  };
+  handleSelect = (studentSelected, index) => {
+    this.setState({
+      form: JSON.parse(JSON.stringify(studentSelected)),
+      indexSelected: index,
+    });
+  };
+  checkInvalidForm = () => {
+    const { name, phone, email } = this.state.form;
+    const value = name && phone && email;
+    this.setState({
+      isValid: value,
+    });
+  };
+  handleSubmit = () => {
+    if (this.state.isValid) {
+      const newList = this.state.studentList.slice();
+      if (this.state.indexSelected > -1) {
+        // console.log(this.state.indexSelected)
+
+        newList[this.state.indexSelected] = this.state.form;
+      } else {
+        console.log(11)
+        newList.push({
+          ...this.state.form,
+          id: Date.now(),
+        });
+      }
+      this.setState({
+        studentList: newList,
+        form: { name: "", phone: "", email: "" },
+        isValid: false,
+        indexSelected: -1,
+      });
+    }
+  };
+
+  handleDelete = (index) => {
+    const newStudents = [...this.state.studentList];
+    newStudents.splice(index, 1);
+    this.setState({ studentList: newStudents });
+  };
+
+  render() {
+    const { studentList, form } = this.state;
     return (
-      <div style={{textAlign: 'center'}}>
+      <div>
         <div>
-            <h1>Please Log in</h1>
-            <button onClick={this.handleLogIn}>Log in</button>
+          <h1>Student List</h1>
+          <div>
+            <label>Name: </label>
+            <input name="name" value={form.name} onChange={this.handleChange} />
+          </div>
+          <div>
+            <label>Phone: </label>
+            <input
+              type="number"
+              name="phone"
+              value={form.phone}
+              onChange={this.handleChange}
+            />
+          </div>
+          <div>
+            <label>Email: </label>
+            <input
+              name="email"
+              value={form.email}
+              onChange={this.handleChange}
+            />
+          </div>
+          <button onClick={this.handleSubmit}>Submit</button>
+          <table border={1}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+           
+            <tbody>
+              {studentList.map((student, index) => (
+                <tr key={student.id}>
+                  <td>{student.name}</td>
+                  <td>{student.phone}</td>
+                  <td>{student.email}</td>
+                  <td>
+                    <button onClick={() => this.handleSelect(student, index)}>
+                      Edit
+                    </button>
+                    <button onClick={() => this.handleDelete(index)}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-    )
+    );
   }
 }
- 
-export default App
+export default App;
